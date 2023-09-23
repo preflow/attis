@@ -1,0 +1,5 @@
+[flake8]
+extend-ignore = E501
+max-line-length = 120
+exclude =
+  attis/__init__.py
