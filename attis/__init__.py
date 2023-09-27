@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-# from .blank_func import reverse
+# from . import libcore
 from .main import main_entry
 
 __version__ = "0.0.0"
-# __all__ = [
-#     "reverse",
-# ]
+__all__ = [
+    "__version__",
+    "main_entry",
+]

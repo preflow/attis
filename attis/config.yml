@@ -1,0 +1,77 @@
+_import:
+    - .
+
+config:
+  mode: prod # prod, debug
+  preset_sources: # local path or remote path (url)
+    - /etc/attis/preset/
+
+main_entry:
+  # - "--version"
+  # - "help"
+  - "set disk/du du -sh *"
+  - "list disk"
+  - "list"
+  - "list disk/du"
+  # - "set disk/df df -h"
+
+# 1. load preset sources
+preset_manager:
+  $libcore.preset_manager.PresetManager:
+    sources: /config/preset_sources
+    local_preset_name: local.yml
+
+# 2. Run action manager based on user's params
+action_manager:
+  $libcore.action_manager.ActionManager:
+    actions: /actions
+  run():
+    test_main_entry:
+      multiple_commands: /main_entry
+
+action_manifest:
+  help:
+    alias: ["h"]
+    description: Listing available actions and examples.
+    example:
+      - attis help
+      - attis --help
+      - a h
+      - a -h
+  version:
+    alias: ["v"]
+    description: Version of installed Attis.
+    example:
+      - attis --version
+      - attis version
+      - a v
+      - a -v
+  set:
+    alias: ["s"]
+    description: Write command shortcut to a book
+    example:
+      - attis set sys/disk df -h
+      - a s sys/du du -sh * | sort -h
+
+actions:
+  help:
+    $libcore.action.help_action.HelpAction:
+      action_manifest: /action_manifest
+  version:
+    $libcore.action.version_action.VersionAction: {}
+  set:
+    $libcore.action.set_action.SetAction:
+      preset_manager: /preset_manager
+  list:
+    $libcore.action.list_action.ListAction:
+      preset_manager: /preset_manager
+  exe:
+    $libcore.action.exe_action.ExeAction:
+      preset_manager: /preset_manager
+
+# shortcut key params
+  h: /actions/help
+  v: /actions/version
+  s: /actions/set
+  l: /actions/list
+  e: /actions/exe
