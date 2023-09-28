@@ -30,9 +30,10 @@ action_manifest:
       - a ls sys
       - a ls sys_*
       - a ls sys/*
-  go:
+  run:
     alias: []
     description: Run a (shortcut command) line
     example:
-      - attis set ls_all ls -la && attis go ls_all
-      - a set sys/du du -sh * | sort -h && a go sys/du
+      - attis set ls_all ls -la && attis run ls_all
+      - a set sys/du du -sh * | sort -h && a run sys/du
+      - a set sys/df df -h | sort -h && a run sys df

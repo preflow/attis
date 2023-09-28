@@ -6,11 +6,6 @@ from .base_action import BaseAction
 sck_log = SckLog()
 
 
-# import subprocess
-# output = subprocess.getoutput("ls -l")
-# print(output)
-
-
 class SetAction(BaseAction):
     def __init__(self, preset_manager):
         super().__init__(preset_manager=preset_manager)

@@ -5,17 +5,27 @@ _inherit:
   - help.yml
 
 config:
-  mode: prod # prod, debug
   preset_sources: # local path or remote path (url)
     - /etc/attis/preset/
+  attis:
+    mode: prod # prod, debug
+    run_line_split: ========= Attis Output =========
 
 main_entry:
+  - ""
   - "--version"
   - "help"
   - "set disk/du du -sh *"
-  - "ls disk"
   - "ls"
+  - "ls disk"
   - "ls disk/du"
+  - "ls disk du"
+  - "ls disk no_exist"
+  - "run disk no_exist"
+  - "run xxx"
+  - "run disk du"
+  - "" # equivalent to `attis` or `a`
+  - "disk du" # equivalent to `attis disk du`, as well as `attis run disk du`
   # - "set disk/df df -h"
 
 # 1. load preset sources
@@ -28,6 +38,7 @@ preset_manager:
 action_manager:
   $libcore.action_manager.ActionManager:
     actions: /actions
+    preset_manager: /preset_manager
   run():
     test_main_entry:
       multiple_commands: /main_entry
@@ -44,13 +55,15 @@ actions:
   ls:
     $libcore.action.list_action.ListAction:
       preset_manager: /preset_manager
-  go:
+  run:
     $libcore.action.exe_action.ExeAction:
       preset_manager: /preset_manager
+      list_action: /actions/ls
+      run_line_split: /config/attis/run_line_split
 
 # shortcut key params
   h: /actions/help
   v: /actions/version
   # s: /actions/set
-  l: /actions/list
-  # e: /actions/exe
+  l: /actions/ls
+  # r: /actions/run

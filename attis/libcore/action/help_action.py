@@ -32,10 +32,10 @@ class HelpAction(BaseAction):
                 - a v
         """
         print(
-            """|-------------------------------------------|
+            """|----------------------------------------|
 |                   ATTIS                   |
-| A productivity tool for command line user |
-|-------------------------------------------|
+| A productivity tool to assist terminal |
+|----------------------------------------|
 Usage:  attis OPTIONS / COMMAND
 or:     a OPTIONS / COMMAND
 """

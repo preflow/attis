@@ -22,7 +22,9 @@ class ListAction(BaseAction):
         return res_table
 
     def resolve_query_result(self, res, path=False):
+        is_leaf = True
         if OmegaConf.is_config(res):
+            is_leaf = False
             table = self.get_pretty_table()
             res = OmegaConf.to_object(res)  # dict or list
             if isinstance(res, dict):
@@ -38,7 +40,7 @@ class ListAction(BaseAction):
                                 len(v),
                                 BOOK_PAGE_SPLIT_DELIMITER.join([path, k])
                                 if path
-                                else "",
+                                else k,
                             )
                         )  # key, value, weight, full_path
                     else:  # scalar
@@ -49,7 +51,7 @@ class ListAction(BaseAction):
                                 -1,
                                 BOOK_PAGE_SPLIT_DELIMITER.join([path, k])
                                 if path
-                                else "",
+                                else k,
                             )
                         )
                 item_arr = sorted(item_arr, key=lambda tup: (tup[2], tup[0]))
@@ -59,7 +61,7 @@ class ListAction(BaseAction):
             #     table.add_rows([[item, False] for item in res])
             #     res = table.get_string()
             # pass
-        return res
+        return res, is_leaf
 
     def __call__(self, args=[]):
         p_keys = []
@@ -68,17 +70,31 @@ class ListAction(BaseAction):
                 p_keys += arg.split(BOOK_PAGE_SPLIT_DELIMITER)
 
         # first, try direct key query my_page1/my_page2/my_key
-        direct_key = ".".join(p_keys)
-        res = self.preset_manager.get(key=direct_key, default=False)
-        if res:
-            print(
-                self.resolve_query_result(
-                    res, path=BOOK_PAGE_SPLIT_DELIMITER.join(p_keys)
+        clone_keys = p_keys.copy()
+        while len(clone_keys) >= 0:
+            if len(clone_keys) == 0:
+                res, is_leaf = self.resolve_query_result(
+                    self.preset_manager.get(target=False, key=False)
+                )  # self.preset_manager.book
+                print(res)
+                return False
+
+            direct_key = ".".join(clone_keys)
+            res = self.preset_manager.get(key=direct_key, default=False)
+            if res:
+                cmd, is_leaf = self.resolve_query_result(
+                    res, path=BOOK_PAGE_SPLIT_DELIMITER.join(clone_keys)
                 )
-            )
-        else:
-            print("Attis cannot access '%s'" % direct_key)
-            print(self.preset_manager.book)
+                print(cmd)
+                return cmd if is_leaf else False
+            else:
+                attis_key = BOOK_PAGE_SPLIT_DELIMITER.join(clone_keys)
+                clone_keys = clone_keys[:-1]
+                new_attis_key = BOOK_PAGE_SPLIT_DELIMITER.join(clone_keys)
+                print(
+                    "Attis cannot access '%s'. Try again with '%s'"
+                    % (attis_key, new_attis_key)
+                )
 
         # #TODO: ls with regex pattern, similar matching
         # res = self.preset_manager.get(target=False, key=False) # self.preset_manager.book

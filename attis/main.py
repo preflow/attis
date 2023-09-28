@@ -36,7 +36,7 @@ def main_entry():
     sck = Scake(ATTIS_CONFIG_PATH)
 
     # setup logger
-    if sck.get("/config/mode", "prod") != "debug":
+    if sck.get("/config/attis/mode", "prod") != "debug":
         # Remove all handlers associated with the root logger object.
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
