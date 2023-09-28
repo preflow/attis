@@ -6,7 +6,7 @@ from scake import SckLog
 
 sck_log = SckLog()
 
-BOOK_CHAPTER_SPLIT_DELIMITER = "/"
+BOOK_PAGE_SPLIT_DELIMITER = "/"
 
 SOURCE_KEY_TYPE = "type"
 SOURCE_KEY_ENDPOINT = "endpoint"
@@ -89,7 +89,7 @@ class PresetManager:
             dot_list = [
                 '%(key)s="%(value)s"'
                 % {
-                    "key": key.replace(BOOK_CHAPTER_SPLIT_DELIMITER, "."),
+                    "key": key.replace(BOOK_PAGE_SPLIT_DELIMITER, "."),
                     "value": value,
                 }
             ]
@@ -112,20 +112,17 @@ class PresetManager:
             with open(src_endpoint, "w") as f:
                 f.write(OmegaConf.to_yaml(src_book))
 
-    def get(self, key=None):
+    def get(self, target=False, key=False, default=False, throw_on_missing=False):
+        target = self.book if not target else target
         if not key:
-            return OmegaConf.to_yaml(self.book)
+            return target
         else:
-            try:
-                return OmegaConf.to_yaml(
-                    OmegaConf.select(
-                        self.book, key.replace(BOOK_CHAPTER_SPLIT_DELIMITER, ".")
-                    )
-                )
-            except Exception:  # for scala
-                return OmegaConf.select(
-                    self.book, key.replace(BOOK_CHAPTER_SPLIT_DELIMITER, ".")
-                )
+            return OmegaConf.select(
+                target,
+                key.replace(BOOK_PAGE_SPLIT_DELIMITER, "."),
+                default=default,
+                throw_on_missing=False,
+            )
 
 
 log_info = sck_log.register(obj_or_class=PresetManager, is_info=True)

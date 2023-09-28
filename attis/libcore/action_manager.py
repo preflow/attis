@@ -38,6 +38,7 @@ class ActionManager:
         )
         for cmd_args in multiple_commands:
             self.__call__(args=cmd_args.split(" "))
+            print("-------------")
 
 
 log_info = sck_log.register(obj_or_class=ActionManager, is_info=True)

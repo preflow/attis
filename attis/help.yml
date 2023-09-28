@@ -1,0 +1,38 @@
+
+action_manifest:
+  help:
+    alias: ["h"]
+    description: Listing available actions and examples.
+    example:
+      - attis help
+      - attis --help
+      - a h
+      - a -h
+  version:
+    alias: ["v"]
+    description: Version of installed Attis.
+    example:
+      - attis --version
+      - attis version
+      - a v
+      - a -v
+  set:
+    alias: []
+    description: Set command shortcut to a book
+    example:
+      - attis set sys/disk df -h
+      - a set sys/du du -sh * | sort -h
+  ls:
+    alias: ["l"]
+    description: List page(s) in a book
+    example:
+      - attis ls
+      - a ls sys
+      - a ls sys_*
+      - a ls sys/*
+  go:
+    alias: []
+    description: Run a (shortcut command) line
+    example:
+      - attis set ls_all ls -la && attis go ls_all
+      - a set sys/du du -sh * | sort -h && a go sys/du
