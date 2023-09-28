@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from .main import main_entry
+from .main import main, main_entry
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __all__ = [
     "__version__",
     "main_entry",
+    "main",
 ]

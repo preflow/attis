@@ -56,7 +56,7 @@ class ActionManager:
                 ls_action = self.actions["ls"]
                 ls_action()
 
-    def test_main_entry(self, multiple_commands):
+    def run_commands(self, multiple_commands):
         multiple_commands = (
             [
                 multiple_commands,
@@ -64,9 +64,10 @@ class ActionManager:
             if not isinstance(multiple_commands, (tuple, list))
             else multiple_commands
         )
-        for cmd_args in multiple_commands:
+        for cmd_idx, cmd_args in enumerate(multiple_commands):
             self.__call__(args=cmd_args.split(" "))
-            print("-------------")
+            if cmd_idx != len(multiple_commands) - 1:
+                print("-------------")
 
 
 log_info = sck_log.register(obj_or_class=ActionManager, is_info=True)

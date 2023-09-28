@@ -1,5 +1,5 @@
 _import:
-  - .
+  - ..
 
 _inherit:
   - help.yml
@@ -40,7 +40,7 @@ action_manager:
     actions: /actions
     preset_manager: /preset_manager
   run():
-    test_main_entry:
+    run_commands:
       multiple_commands: /main_entry
 
 actions:

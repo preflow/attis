@@ -20,7 +20,7 @@ logging.addLevelName(
 _logger = logging.getLogger(__name__)
 
 ATTIS_CONFIG_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "config.yml"
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "static"), "config.yml"
 )
 
 
@@ -29,12 +29,35 @@ def run():
 
 
 def main_entry():
-    # print("------------------")
-    # print("|     Attis      |")
-    # print("------------------")
-
     sck = Scake(ATTIS_CONFIG_PATH)
 
+    my_args = list(sys.argv[1:])
+    if not my_args:
+        my_args = [
+            "",
+        ]
+    else:
+        my_args = [
+            " ".join(my_args),
+        ]  # list of 1 item
+
+    sck._conf.get_config()["main_entry"] = my_args
+
+    # setup logger
+    # Remove all handlers associated with the root logger object.
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    logging.basicConfig(
+        stream=sys.stderr,
+        level=logging.ERROR,
+        format="%(asctime)s.%(msecs)03d %(levelname)s %(funcName)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    sck()
+
+
+def main():
+    sck = Scake(ATTIS_CONFIG_PATH)
     # setup logger
     if sck.get("/config/attis/mode", "prod") != "debug":
         # Remove all handlers associated with the root logger object.
@@ -48,9 +71,9 @@ def main_entry():
         )
     else:
         pass
-
     sck()
 
 
 if __name__ == "__main__":
-    main_entry()
+    # main_entry()
+    main()
