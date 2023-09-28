@@ -1,39 +1,64 @@
 
 action_manifest:
   help:
-    alias: ["h"]
-    description: Listing available actions and examples.
+    command:
+      - help
+      - h, -h
+    description: Print usage instruction.
     example:
       - attis help
-      - attis --help
       - a h
       - a -h
   version:
-    alias: ["v"]
-    description: Version of installed Attis.
+    command:
+      - version
+      - v, -v
+    description: Print version infomation.
     example:
-      - attis --version
       - attis version
       - a v
       - a -v
   set:
-    alias: []
-    description: Set command shortcut to a book
+    command:
+      - set KEY COMMAND
+    description: Set a shortcut key for the command. KEY format is similar to "relative" file system path "<key1>/<key2>/<key3>". The keys are listed by `attis ls KEY`, and used by `attis run KEY`.
     example:
-      - attis set sys/disk df -h
+      - attis set my_df df -h
       - a set sys/du du -sh * | sort -h
+      - a set sys/listing/tmp ls -la / | grep tmp
   ls:
-    alias: ["l"]
-    description: List page(s) in a book
+    command:
+      - ls KEY | KEY1 KEY2 ...
+      - l KEY | KEY1 KEY2 ...
+    description: List stored keys in Attis
     example:
+      - "# (The keys in examples are set already in the examples of `attis ls`)"
+      - ""
       - attis ls
-      - a ls sys
-      - a ls sys_*
-      - a ls sys/*
+      - a ls
+      - a l
+      - a l sys
+      - a l sys listing
+      - a l sys/listing/tmp
+
   run:
-    alias: []
-    description: Run a (shortcut command) line
+    command:
+      - run KEY | KEY1 KEY2 ...
+      - ""
+      - "or without command:"
+      - ""
+      - KEY | KEY1 KEY2
+    argument:
+    description: Run the command by passing key
     example:
-      - attis set ls_all ls -la && attis run ls_all
-      - a set sys/du du -sh * | sort -h && a run sys/du
-      - a set sys/df df -h | sort -h && a run sys df
+      - "# (The keys in examples are set already in the examples of `attis ls`)"
+      - ""
+      - attis my_df
+      - a sys/du
+      - a sys listing tmp
+      - ""
+      - '# or use "run" command'
+      - ""
+      - attis run my_df
+      - a run sys/du
+      - a run sys listing tmp

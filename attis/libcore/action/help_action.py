@@ -33,38 +33,33 @@ class HelpAction(BaseAction):
         """
         print(
             """|----------------------------------------|
-|                   ATTIS                   |
-| A productivity tool to assist terminal |
+|                 ATTIS                  |
+| A productivity tool for linux terminal |
 |----------------------------------------|
-Usage:  attis OPTIONS / COMMAND
-or:     a OPTIONS / COMMAND
+Usage:  attis COMMAND [ARGUMENT]
+or:     a COMMAND [ARGUMENT]
 """
         )
         help_table = PrettyTable()
-        help_table.field_names = ["OPTIONS / COMMAND", "Description"]
+        help_table.field_names = ["Command", "Description & Examples"]
         help_table.align = "l"
         help_table.border = False  # no_border
+        col_max_width = 75
+        help_table._max_width = {"Command": 30, "Description & Examples": col_max_width}
+        help_table._min_width = {"Command": 30}
         for action_name, action_help in self.action_manifest.items():
-            alias_names = action_help.get("alias", [])
-            action_names = (
-                "  "
-                + ", ".join([action_name, "--" + action_name])
-                + "\n  "
-                + ", ".join(["%s, -%s" % (an, an) for an in alias_names])
-            )
+            command = "\n".join(action_help.get("command", ""))
             description = action_help.get("description", "")
             examples = "\n".join(action_help.get("example", []))
-            #             print("""%(action_names)s: %(description)s
-            # Examples:
-            # %(examples)s """ % {
-            #                 "action_names": action_names,
-            #                 "description": description,
-            #                 "examples": examples,
-            #             })
             help_table.add_row(
                 [
-                    action_names,
-                    "%s\n%s\n%s" % (description, "-" * len(description), examples),
+                    command,
+                    "%s\n```bash\n%s\n```\n%s"
+                    % (
+                        description,
+                        examples,
+                        "-" * min(len(description), col_max_width),
+                    ),
                 ]
             )
         print(help_table)
