@@ -48,7 +48,17 @@ class PresetManager:
                 )
                 continue
             else:  # local folder
+                # if not os.access(src, os.R_OK):
+                #     raise Exception()
+
                 os.makedirs(src, exist_ok=True)
+
+                # try:
+                #     os.chmod(src, 0o777)
+                # except:
+                #     # not enough permission
+                #     pass
+
                 local_endpoint_file = os.path.join(
                     src, self.local_preset_name
                 )  # /etc/attis/preset/local.yml

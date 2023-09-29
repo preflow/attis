@@ -36,17 +36,24 @@ class HelpAction(BaseAction):
 |                 ATTIS                  |
 | A productivity tool for linux terminal |
 |----------------------------------------|
+
+Set shortcut keys for commonly used commands in terminal.
+
 Usage:  attis COMMAND [ARGUMENT]
 or:     a COMMAND [ARGUMENT]
+
 """
         )
         help_table = PrettyTable()
-        help_table.field_names = ["Command", "Description & Examples"]
+        help_table.field_names = ["Commands", "Description & Examples"]
         help_table.align = "l"
         help_table.border = False  # no_border
         col_max_width = 75
-        help_table._max_width = {"Command": 30, "Description & Examples": col_max_width}
-        help_table._min_width = {"Command": 30}
+        help_table._max_width = {
+            "Commands": 30,
+            "Description & Examples": col_max_width,
+        }
+        help_table._min_width = {"Commands": 30}
         for action_name, action_help in self.action_manifest.items():
             command = "\n".join(action_help.get("command", ""))
             description = action_help.get("description", "")

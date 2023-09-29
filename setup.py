@@ -10,4 +10,4 @@ PACKAGE_NAME = "attis"
 with io.open("%s/__init__.py" % PACKAGE_NAME, "rt", encoding="utf8") as f:
     version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
-setup(version=version, package_data={PACKAGE_NAME: ["**/*.yml"]})
+setup(version=version, package_data={PACKAGE_NAME: ["static/*.yml"]})

@@ -80,13 +80,13 @@ class ExeAction(BaseAction):
                 )
             )
 
-            t_start = time.time()
+            time.time()
             _ = run_command_print_progressive(
                 command_line, is_stdout=True
             )  # return array ["<line1>", "<line2>", ...]
-            t_end = time.time()
+            time.time()
 
-            print("Delta time: %.2fs" % (t_end - t_start,))
+            # print("Delta time: %.2fs" % (t_end - t_start,))
             # output = subprocess.getoutput(command_line)
             # print(self.run_line_split) if self.run_line_split else None # ========= Attis Output =========
             # print(output)
