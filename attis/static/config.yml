@@ -10,6 +10,9 @@ config:
   attis:
     mode: prod # prod, debug
     run_line_split: ========= Attis Output =========
+    exe_action:
+      line_char: "+"
+      center_char: "Attis"
 
 main_entry:
   - ""
@@ -59,7 +62,9 @@ actions:
     $libcore.action.exe_action.ExeAction:
       preset_manager: /preset_manager
       list_action: /actions/ls
-      run_line_split: /config/attis/run_line_split
+      # run_line_split: /config/attis/run_line_split
+      line_char: /config/attis/exe_action/line_char
+      center_char: /config/attis/exe_action/center_char
 
 # shortcut key params
   h: /actions/help

@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 
+import plazy
 from scake import Scake, SckLog
 
 sck_log = SckLog()
@@ -24,14 +25,13 @@ ATTIS_CONFIG_PATH = os.path.join(
 )
 
 
-def run():
-    pass
+ATTIS_MODE_DEBUG = "debug"
 
 
-def main_entry():
+def main_entry(argv=None):
     sck = Scake(ATTIS_CONFIG_PATH)
 
-    my_args = list(sys.argv[1:])
+    my_args = argv if argv is not None else list(sys.argv[1:])
     if not my_args:
         my_args = [
             "",
@@ -53,13 +53,18 @@ def main_entry():
         format="%(asctime)s.%(msecs)03d %(levelname)s %(funcName)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+
     sck()
 
 
 def main():
+    plazy.tic("init sck")
     sck = Scake(ATTIS_CONFIG_PATH)
+    plazy.toc("init sck")
+
+    mode = sck.get("/config/attis/mode", "prod")
     # setup logger
-    if sck.get("/config/attis/mode", "prod") != "debug":
+    if mode != ATTIS_MODE_DEBUG:
         # Remove all handlers associated with the root logger object.
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
@@ -71,9 +76,18 @@ def main():
         )
     else:
         pass
+
+    plazy.tic("exe sck")
     sck()
+    plazy.toc("exe sck")
+
+    # performance of Scake!
+    print(plazy.get_tictoc())
 
 
 if __name__ == "__main__":
-    # main_entry()
-    main()
+    main_args = sys.argv[1:]
+    if len(main_args) > 1 and main_args[0] == "cli":
+        main_entry(argv=sys.argv[2:])  # exclue "cli" annotation
+    else:
+        main()

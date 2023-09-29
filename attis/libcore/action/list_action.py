@@ -10,12 +10,15 @@ sck_log = SckLog()
 
 
 class ListAction(BaseAction):
-    def __init__(self, preset_manager):
-        super().__init__(preset_manager=preset_manager)
+    def __init__(self, preset_manager, is_quite=False):
+        """
+        is_quite: for Python usage
+        """
+        super().__init__(preset_manager=preset_manager, is_quite=is_quite)
 
     def get_pretty_table(self):
         res_table = PrettyTable()
-        res_table.field_names = ["Name", "Cmd", "Path"]
+        res_table.field_names = ["Name", "Cmd", "Key"]
         res_table.align = "l"
         res_table.border = True  # False  #no_border
         res_table.header = True  # False  #no_header
@@ -63,11 +66,13 @@ class ListAction(BaseAction):
             # pass
         return res, is_leaf
 
-    def __call__(self, args=[]):
+    def __call__(self, args=[], is_quite=None):
         p_keys = []
         for arg in args:  # my_page/my_key
             if arg:
                 p_keys += arg.split(BOOK_PAGE_SPLIT_DELIMITER)
+
+        is_quite = self.is_quite if is_quite is None else is_quite
 
         # first, try direct key query my_page1/my_page2/my_key
         clone_keys = p_keys.copy()
@@ -76,7 +81,8 @@ class ListAction(BaseAction):
                 res, is_leaf = self.resolve_query_result(
                     self.preset_manager.get(target=False, key=False)
                 )  # self.preset_manager.book
-                print(res)
+                if not is_quite:
+                    print(res)
                 return False
 
             direct_key = ".".join(clone_keys)
@@ -85,16 +91,18 @@ class ListAction(BaseAction):
                 cmd, is_leaf = self.resolve_query_result(
                     res, path=BOOK_PAGE_SPLIT_DELIMITER.join(clone_keys)
                 )
-                print(cmd)
+                if not is_quite:
+                    print(cmd)
                 return cmd if is_leaf else False
             else:
                 attis_key = BOOK_PAGE_SPLIT_DELIMITER.join(clone_keys)
                 clone_keys = clone_keys[:-1]
                 new_attis_key = BOOK_PAGE_SPLIT_DELIMITER.join(clone_keys)
-                print(
-                    "Attis cannot access '%s'. Try again with '%s'"
-                    % (attis_key, new_attis_key)
-                )
+                if not is_quite:
+                    print(
+                        "Attis cannot access '%s'. Try again with '%s'"
+                        % (attis_key, new_attis_key)
+                    )
 
         # #TODO: ls with regex pattern, similar matching
         # res = self.preset_manager.get(target=False, key=False) # self.preset_manager.book
