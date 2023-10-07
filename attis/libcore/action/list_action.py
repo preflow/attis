@@ -18,11 +18,34 @@ class ListAction(BaseAction):
 
     def get_pretty_table(self):
         res_table = PrettyTable()
-        res_table.field_names = ["Name", "Cmd", "Key"]
+        res_table.field_names = ["Key", "Cmd / Node"]
         res_table.align = "l"
         res_table.border = True  # False  #no_border
         res_table.header = True  # False  #no_header
         return res_table
+
+    def _parse_value_for_display(self, values):
+        result = []
+        if isinstance(values, (list, tuple)):
+            for idx, val in enumerate(values):
+                if isinstance(val, (dict, list, tuple)):
+                    if isinstance(val, dict):
+                        result.append("-%d {%d}" % (idx, len(val)))
+                    else:
+                        result.append("-%d [%d]" % (idx, len(val)))
+                else:
+                    result.append("-%d %s" % (idx, val))
+        elif isinstance(values, dict):
+            keys_with_scalar = []
+            keys_with_values = []
+            for k, v in values.items():
+                if isinstance(v, (dict, list, tuple)):
+                    keys_with_values.append("%s (%d)" % (k, len(v)))
+                else:
+                    keys_with_scalar.append(k)
+            result.append(", ".join(keys_with_scalar)) if keys_with_scalar else None
+            result.append(", ".join(keys_with_values)) if keys_with_values else None
+        return result
 
     def resolve_query_result(self, res, path=False):
         is_leaf = True
@@ -36,14 +59,18 @@ class ListAction(BaseAction):
                     if isinstance(v, (dict, list, tuple)):
                         if len(v) == 0:
                             continue
+
+                        # parsing the "dict", "list" or "tuple"
+                        childs = self._parse_value_for_display(v)
                         item_arr.append(
                             (
                                 "%s (%d)" % (k, len(v)),
-                                "",
+                                "\n".join(childs),
                                 len(v),
-                                BOOK_PAGE_SPLIT_DELIMITER.join([path, k])
+                                "%s (%d)"
+                                % (BOOK_PAGE_SPLIT_DELIMITER.join([path, k]), len(v))
                                 if path
-                                else k,
+                                else "%s (%d)" % (k, len(v)),
                             )
                         )  # key, value, weight, full_path
                     else:  # scalar
@@ -58,7 +85,8 @@ class ListAction(BaseAction):
                             )
                         )
                 item_arr = sorted(item_arr, key=lambda tup: (tup[2], tup[0]))
-                table.add_rows([[item[0], item[1], item[3]] for item in item_arr])
+                # table.add_rows([[item[0], item[1], item[3]] for item in item_arr])
+                table.add_rows([[item[3], item[1]] for item in item_arr])
                 res = table.get_string()
             # else: # list
             #     table.add_rows([[item, False] for item in res])
