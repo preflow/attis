@@ -24,6 +24,17 @@ class PresetManager:
         self.book = OmegaConf.create()
         self.source_dict = self.load(self.sources)
 
+    def _remove_key(self, book, key):
+        # mydict = book.__dict__
+        mydict = OmegaConf.to_container(book)
+        keys = key.split(BOOK_PAGE_SPLIT_DELIMITER)
+        for kidx, kname in enumerate(keys):
+            if kidx == len(keys) - 1:
+                mydict.pop(kname, False)
+                break
+            mydict = mydict[kname]
+        return OmegaConf.create(mydict)
+
     def load(self, sources):
         """
         sources: ['/etc/attis/preset/']
@@ -104,10 +115,55 @@ class PresetManager:
                 }
             ]
             new_book = OmegaConf.from_dotlist(dot_list)
-            self.book = OmegaConf.merge(self.book, new_book)
-            self.source_dict[src][SOURCE_KEY_BOOK] = OmegaConf.merge(
-                self.source_dict[src][SOURCE_KEY_BOOK], new_book
+
+            check_value = self.get(
+                target=self.book,
+                key=key.replace(BOOK_PAGE_SPLIT_DELIMITER, "."),
+                default=False,
+                throw_on_missing=False,
             )
+
+            if not value:
+                if check_value:  # delete an existing node?!
+                    if OmegaConf.is_config(check_value):  # verify user answer
+                        try:
+                            answer = input(
+                                'Do you want to permanently remove the key "%s (%d)"? (y/n): '
+                                % (key, len(check_value))
+                            )
+                        except KeyboardInterrupt:
+                            answer = "n"
+                            print()
+                        if answer.lower() in ("y", "yes"):
+                            self.book = self._remove_key(self.book, key)
+                            self.source_dict[src][SOURCE_KEY_BOOK] = self._remove_key(
+                                self.source_dict[src][SOURCE_KEY_BOOK], key
+                            )
+                    else:  # https://stackoverflow.com/a/75864957
+                        self.book = self._remove_key(self.book, key)
+                        self.source_dict[src][SOURCE_KEY_BOOK] = self._remove_key(
+                            self.source_dict[src][SOURCE_KEY_BOOK], key
+                        )
+            else:
+                if check_value and OmegaConf.is_config(check_value):
+                    try:
+                        answer = input(
+                            'Do you want to overwrite the key "%s (%d)"? (y/n): '
+                            % (key, len(check_value))
+                        )
+                    except KeyboardInterrupt:
+                        answer = "n"
+                        print()
+                    if answer.lower() in ("y", "yes"):
+                        self.book = OmegaConf.merge(self.book, new_book)
+                        self.source_dict[src][SOURCE_KEY_BOOK] = OmegaConf.merge(
+                            self.source_dict[src][SOURCE_KEY_BOOK], new_book
+                        )
+                else:
+                    self.book = OmegaConf.merge(self.book, new_book)
+                    self.source_dict[src][SOURCE_KEY_BOOK] = OmegaConf.merge(
+                        self.source_dict[src][SOURCE_KEY_BOOK], new_book
+                    )
         else:
             print("TODO")
             raise Exception()
