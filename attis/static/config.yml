@@ -17,6 +17,7 @@ config:
 
 main_entry:
   - ""
+  - "v"
   - "--version"
   - "help"
   - "set disk/du du -sh *"
@@ -59,6 +60,9 @@ actions:
   ls:
     $libcore.action.list_action.ListAction:
       preset_manager: /preset_manager
+  rm:
+    $libcore.action.remove_action.RemoveAction:
+      preset_manager: /preset_manager
   run:
     $libcore.action.exe_action.ExeAction:
       preset_manager: /preset_manager
@@ -69,7 +73,8 @@ actions:
 
 # shortcut key params
   h: /actions/help
-  v: /actions/version
+  v:
+    $libcore.action.version_action.VersionAction: {}
   # s: /actions/set
   l: /actions/ls
   # r: /actions/run

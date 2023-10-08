@@ -7,6 +7,7 @@ import time
 from scake import SckLog
 
 from .base_action import BaseAction
+from .term_style import TermStyle
 
 sck_log = SckLog()
 
@@ -42,9 +43,7 @@ def run_command_print_progressive(command, is_stdout=True):
     return output_lines
 
 
-def get_splitter_line(
-    line_char="+", center_char="Attis Output", max_chars=TERMINAL_WIDTH
-):
+def get_splitter_line(line_char="+", center_char="Attis", max_chars=TERMINAL_WIDTH):
     center_char = " %s " % center_char
     n_center = len(center_char)  # 9
     n_line_half = (max_chars - n_center) // 2  # (4-9)//2 = -2
@@ -53,10 +52,12 @@ def get_splitter_line(
     n_line_remaining = 0 if n_line_half <= 0 else n_line_remaining
     n_line_half = 1 if n_line_half <= 0 else n_line_half
 
-    return "%(line)s%(center)s%(line)s%(remaining)s" % {
+    return "%(style_start)s%(line)s%(center)s%(line)s%(remaining)s%(style_end)s" % {
         "line": line_char * n_line_half,
         "center": center_char,
         "remaining": line_char * n_line_remaining,
+        "style_start": TermStyle.BOLD,
+        "style_end": TermStyle.ENDC,
     }
 
 

@@ -18,7 +18,7 @@ class ListAction(BaseAction):
 
     def get_pretty_table(self):
         res_table = PrettyTable()
-        res_table.field_names = ["Key", "Cmd / Node"]
+        res_table.field_names = ["Key", "Value / Node"]
         res_table.align = "l"
         res_table.border = True  # False  #no_border
         res_table.header = True  # False  #no_header

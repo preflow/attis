@@ -27,13 +27,14 @@ class PresetManager:
     def _remove_key(self, book, key):
         # mydict = book.__dict__
         mydict = OmegaConf.to_container(book)
+        original_dict = mydict  # hold a reference to root of dictionary!
         keys = key.split(BOOK_PAGE_SPLIT_DELIMITER)
         for kidx, kname in enumerate(keys):
             if kidx == len(keys) - 1:
                 mydict.pop(kname, False)
                 break
             mydict = mydict[kname]
-        return OmegaConf.create(mydict)
+        return OmegaConf.create(original_dict)
 
     def load(self, sources):
         """

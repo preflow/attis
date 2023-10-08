@@ -29,6 +29,10 @@ class ActionManager:
                 action_name[1:] if action_name.startswith("-") else action_name
             )
 
+            if "=" in p_args and action_name != "set":  # attris <k1> <k2> = <command>
+                action_name = "set"
+                action_args = p_args
+
             action_object = self.actions.get(action_name, False)
             if action_object is not False:
                 action_object(
