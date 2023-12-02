@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import readline     # fix text cursor
 
 from omegaconf import OmegaConf
 from scake import SckLog
@@ -109,7 +110,7 @@ class PresetManager:
 
         if book_type == SOURCE_TYPE_LOCAL:
             dot_list = [
-                '%(key)s="%(value)s"'
+                '%(key)s=%(value)s'
                 % {
                     "key": key.replace(BOOK_PAGE_SPLIT_DELIMITER, "."),
                     "value": value,

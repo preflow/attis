@@ -7,7 +7,7 @@ _inherit:
 config:
   preset_sources: # local path or remote path (url)
     # - /etc/attis/preset/
-    - ${oc.env:HOME}/attis/preset/
+    - ${oc.env:HOME}/.attis/preset/
   attis:
     mode: prod # prod, debug
     # run_line_split: ========= Attis Output =========

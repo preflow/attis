@@ -1,6 +1,6 @@
-pytest>=7.4.0
-pre-commit>=3.4.0
+pytest
+pre-commit
 plazy>=0.1.6
-scake>=0.3.0
-prettytable>=3.9.0
-omegaconf>=2.3.0
+scake>=0.3.2
+prettytable
+omegaconf

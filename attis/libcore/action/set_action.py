@@ -30,6 +30,7 @@ class SetAction(BaseAction):
             try:
                 value = input(f"{TermStyle.BOLD}%s ={TermStyle.ENDC} " % key)
             except KeyboardInterrupt:
+                value = False           # fix: finally block code raises "value" referenced before assignment
                 is_cancelled = True
                 print()
             finally:
